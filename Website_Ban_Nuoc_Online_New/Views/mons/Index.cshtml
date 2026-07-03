@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Website_Ban_Nuoc_Online.Models.Mon>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<p></p>
+<p></p>
+<div class="row">
+    <div class="col-md-3 ">
+        <div class="sidebar">
+            @Html.Action("DSMenu", "Mons")
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            @foreach (var sp in Model)
+            {
+                <div class="col-md-3 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="thumb">
+                            <img src="~/Content/Images/@sp.HinhAnh"
+                                 class="card-img-top" />
+                        </div>
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@sp.TenMon</h5>
+                            <p class="text-danger fw-bold">@String.Format("{0:N0} VNĐ", sp.GiaBan)</p>
+                            <a href="@Url.Action("Details","Mons", new { id=sp.MaMon })"
+                               class="btn btn-sm  mt-auto btn-custom ">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>

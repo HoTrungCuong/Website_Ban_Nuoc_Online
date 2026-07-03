@@ -1,0 +1,115 @@
+﻿@model IEnumerable<Website_Ban_Nuoc_Online.Models.HoaDon>
+
+@{
+    ViewBag.Title = "Nhận tình trạng đơn từ shipper";
+    Layout = "~/Views/Shared/_Layout_QL.cshtml";
+}
+
+<h2>Nhận tình trạng đơn từ shipper</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success fw-bold text-center">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger fw-bold text-center">@TempData["Error"]</div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">Không có đơn nào từ shipper.</div>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Mã HD</th>
+                <th>Tên khách hàng</th>
+                <th>Số điện thoại</th>
+                <th>Ngày lập</th>
+                <th>Tên món</th>
+                <th>Đơn giá</th>
+                <th>Số lượng</th>
+                <th>Tổng tiền</th>
+                <th>Địa chỉ giao</th>
+                <th>Tình trạng</th>
+                <th>Thao tác</th> <!-- << Thêm cột ở đây -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var hd in Model.OrderByDescending(x => x.NgayLap))
+            {
+                <tr>
+                    <td>@hd.MaHD</td>
+                    <td>@(hd.KhachHang != null ? hd.KhachHang.HoTen : "-")</td>
+                    <td>@(hd.KhachHang != null ? hd.KhachHang.SDT : "-")</td>
+                    <td>@(hd.NgayLap.HasValue ? hd.NgayLap.Value.ToString("dd/MM/yyyy HH:mm") : "-")</td>
+
+                    <td>
+                        @if (hd.ChiTietHoaDons != null && hd.ChiTietHoaDons.Any())
+                        {
+                            <ul class="mb-0 ps-3">
+                                @foreach (var ct in hd.ChiTietHoaDons)
+                                {
+                                    <li>@(ct.Mon != null ? ct.Mon.TenMon : "-")</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        { <span class="text-muted">-</span>}
+                    </td>
+
+                    <td>
+                        @if (hd.ChiTietHoaDons != null && hd.ChiTietHoaDons.Any())
+                        {
+                            <ul class="mb-0 ps-3">
+                                @foreach (var ct in hd.ChiTietHoaDons)
+                                {
+                                    <li>@String.Format("{0:N0} VNĐ", ct.GiaBan)</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        { <span class="text-muted">-</span>}
+                    </td>
+
+                    <td>
+                        @if (hd.ChiTietHoaDons != null && hd.ChiTietHoaDons.Any())
+                        {
+                            <ul class="mb-0 ps-3">
+                                @foreach (var ct in hd.ChiTietHoaDons)
+                                {
+                                    <li>@ct.SoLuong</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        { <span class="text-muted">-</span>}
+                    </td>
+
+                    <td>@String.Format("{0:N0} VNĐ", hd.TongTien)</td>
+                    <td>@(hd.DiaChiGiaoHang ?? "-")</td>
+
+                    <!-- Tình trạng -->
+                    <td class="text-success fw-bold">Hoàn thành</td>
+
+                    <!-- THAO TÁC: form POST xác nhận -->
+                    <td>
+                        @using (Html.BeginForm("XacNhanTuShipper", "QuanLy", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("id", hd.MaHD)
+                            <button type="submit" class="btn btn-sm btn-primary"
+                                    onclick="return confirm('Xác nhận hoàn thành đơn #@hd.MaHD ?');">
+                                Xác nhận
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}

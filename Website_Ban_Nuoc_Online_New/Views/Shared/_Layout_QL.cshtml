@@ -1,0 +1,203 @@
+﻿@{
+    Layout = null;
+
+    // Lấy controller & action hiện tại
+    string currentController = ViewContext.RouteData.Values["controller"].ToString();
+    string currentAction = ViewContext.RouteData.Values["action"].ToString();
+
+    // Hàm kiểm tra active cho menu
+    Func<string, string, string> IsActive = (ctrl, act) =>
+    {
+        return (currentController == ctrl && currentAction == act) ? "active" : "";
+    };
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        body {
+            background: #f4f3f1;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .header-top {
+            background: #66363e;
+            color: #fff;
+            font-weight: 600;
+            padding: 8px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .sidebar {
+            width: 270px;
+            background: #fff;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-right: 1px solid #ddd;
+            padding-top: 80px;
+        }
+
+        .sidebar-item {
+            padding: 9px 18px;
+            border-radius: 8px;
+            text-align: left;
+            color: #7b4a52;
+            font-weight: 600;
+            text-decoration: none;
+            display: block;
+        }
+
+            .sidebar-item.active {
+                background: #d6b08c;
+                color: #fff;
+            }
+
+            .sidebar-item:hover {
+                background: #ead7c4;
+                color: #7b4a52;
+            }
+
+        .main {
+            margin-left: 270px;
+            padding: 100px 30px 50px 30px;
+        }
+
+        .user-box {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-box {
+            border-radius: 12px;
+            background: #fff;
+            padding: 20px;
+            border: none;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .product-img {
+            height: 160px;
+            width: 100%;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header-top d-flex justify-content-between">
+        <div>GIỜ MỞ CỬA : 08:00 AM - 9:00 PM</div>
+        <div>ĐỊA CHỈ QUÁN: 140 LÊ TRỌNG TẤN, QUẬN TÂN PHÚ, TPHCM</div>
+    </div>
+
+    <div class="sidebar text-center">
+        <img src="~/Content/Images/logo.jpg" style="width:140px;">
+        <p class="mt-2 mb-4 fw-semibold">HOTLINE: 0979 884 432</p>
+
+        <a href="@Url.Action("Index", "QuanLy")"
+           class="sidebar-item @IsActive("QuanLy", "Index")">
+            <i class="fa-solid fa-house"></i> Dashboard
+        </a>
+
+        <a href="@Url.Action("OrderManage", "QuanLy")"
+           class="sidebar-item @IsActive("QuanLy", "OrderManage")">
+            <i class="fa-solid fa-box"></i> Quản lý đơn hàng
+        </a>
+
+        <a href="@Url.Action("Customer", "QuanLy")"
+           class="sidebar-item @IsActive("QuanLy", "Customer")">
+            <i class="fa-solid fa-users"></i> Quản lý khách hàng
+        </a>
+
+        <a href="@Url.Action("SanPham", "QuanLy")"
+           class="sidebar-item @IsActive("QuanLy", "SanPham")">
+            <i class="fa-solid fa-mug-hot"></i> Quản lý sản phẩm
+        </a>
+
+        <a href="@Url.Action("CongTien", "QuanLy")"
+           class="sidebar-item @IsActive("QuanLy", "CongTien")">
+            <i class="fa-solid fa-wallet"></i> Cộng tiền vào ví
+        </a>
+
+        <a href="@Url.Action("ApplyDiscount", "QuanLy")"
+           class="sidebar-item @IsActive("QuanLy", "ApplyDiscount")">
+            <i class="fa-solid fa-ticket"></i> Áp dụng khuyến mãi
+        </a>
+
+        <a href="@Url.Action("Staff", "QuanLy")"
+           class="sidebar-item @IsActive("QuanLy", "Staff")">
+            <i class="fa-solid fa-users"></i> Quản lý nhân viên giao hàng
+        </a>
+
+        <a href="@Url.Action("DanhSachDonNhanVien", "QuanLy")"
+           class="sidebar-item @IsActive("QuanLy", "DanhSachDonNhanVien")">
+            <i class="fa-solid fa-box"></i> Đơn hàng của nhân viên
+        </a>
+    </div>
+
+    <div class="main">
+        <div class="user-box">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-user"></i>
+                <span>Admin</span>
+            </div>
+
+            <button type="button"
+                    class="btn btn-link text-danger fw-bold text-decoration-none p-0"
+                    data-bs-toggle="modal"
+                    data-bs-target="#logoutConfirmModal">
+                Đăng xuất
+            </button>
+        </div>
+
+        @RenderBody()
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Modal xác nhận đăng xuất -->
+    <div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutConfirmLabel">Xác nhận đăng xuất</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc muốn đăng xuất?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+
+                    @using (Html.BeginForm("Logout", "Admin", FormMethod.Post, new { @class = "d-inline" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">Có</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

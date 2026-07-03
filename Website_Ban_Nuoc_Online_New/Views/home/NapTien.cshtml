@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = "NapTien";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+    <!-- Thông báo -->
+    <div class="w-full max-w-4xl border border-blue-400 bg-blue-50 text-blue-800 p-4 rounded-md mb-8">
+        <p style="color:red"><strong>Bắt buộc ghi nội dung chuyển khoản trong hoá đơn, thiếu hoặc sai nội dung nạp web không cộng.</strong></p>
+        <p style="color:mediumpurple">Hệ thống sẽ tự động cộng trong 30s, nếu lâu hơn 15p mà chưa cộng thì inbox cho admin để kiểm tra nhé.</p>
+        <p style="color:red">Hãy quét mã QR cho tiện và để tránh ghi sai nội dung nhé.</p>
+    </div>
+
+    <!-- Block QR -->
+    <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- QR card -->
+        <div class="border rounded-lg shadow-lg p-6 bg-white text-center flex flex-col items-center">
+            <h2 class="text-xl font-bold text-red-600 mb-4">QR CODE</h2>
+
+            <!-- ảnh QR bạn tự thay -->
+            <div class="w-[260px] h-[260px] border rounded-lg flex items-center justify-center bg-gray-100 mb-4">
+                <span class="text-gray-400"><img src="~/Content/Images/qr.jpg"/></span>
+            </div>
+
+            <div class="w-full text-left text-sm">
+                <p><strong>Ngân hàng:</strong> MB BANK</p>
+                <p><strong>Chủ tài khoản:</strong> ĐẶNG TUẤN ANH</p>
+                <p><strong>Số tài khoản:</strong> <span class="text-green-600">0378896290</span></p>
+                <p><strong>Nội dung chuyển khoản:</strong> <span class="text-red-600">username của bạn</span></p>
+            </div>
+        </div>
+
+        <!-- Cột bên phải để trống theo yêu cầu -->
+        <div></div>
+    </div>
+</div>

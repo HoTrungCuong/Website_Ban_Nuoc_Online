@@ -1,0 +1,109 @@
+﻿@{
+    ViewBag.Title = "Dashboard | Quản lý";
+    Layout = "~/Views/Shared/_Layout_QL.cshtml";
+    ViewBag.ActiveMenu = "Dashboard";
+}
+
+<h3 class="fw-bold mt-3 text-success">📊 Tổng quan hệ thống</h3>
+
+<!-- 3 Thẻ Thống Kê Chính -->
+<div class="row mt-4 g-3 text-center">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-success">
+            <div class="card-body">
+                <h5 class="text-success fw-bold">Doanh thu hôm nay</h5>
+                <h3 class="fw-bold">@String.Format("{0:N0} VNĐ", ViewBag.DoanhThuHomNay)</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm border-primary">
+            <div class="card-body">
+                <h5 class="text-primary fw-bold">Đơn hàng hôm nay</h5>
+                <h3 class="fw-bold">@ViewBag.DonHangHomNay</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm border-danger">
+            <div class="card-body">
+                <h5 class="text-danger fw-bold">Khách hàng mới hôm nay</h5>
+                <h3 class="fw-bold">@ViewBag.KhachMoiHomNay</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Biểu đồ doanh thu trong tuần -->
+<div class="container mt-5">
+    <h4 class="fw-bold text-center mb-3 text-success">Thống kê doanh thu trong 7 ngày gần nhất</h4>
+    <div class="card shadow-sm p-4">
+        <canvas id="doanhThuChart" height="120"></canvas>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Dữ liệu truyền từ Controller
+    const ngayTuan = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.NgayTuan));
+    const doanhThuTuan = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.DoanhThuTuan));
+
+    // Vẽ biểu đồ doanh thu
+    const ctx = document.getElementById('doanhThuChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ngayTuan,
+            datasets: [{
+                label: 'Doanh thu (VNĐ)',
+                data: doanhThuTuan,
+                backgroundColor: [
+                    'rgba(75, 192, 75, 0.8)',   // Xanh lá - hôm nay
+                    'rgba(54, 162, 235, 0.8)',  // Xanh nước
+                    'rgba(255, 99, 132, 0.8)',  // Đỏ
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(153, 102, 255, 0.8)',
+                    'rgba(255, 159, 64, 0.8)',
+                    'rgba(0, 128, 128, 0.8)'
+                ],
+                borderColor: 'rgba(0,0,0,0.1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function (value) {
+                            return value.toLocaleString('vi-VN') + ' đ';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return context.parsed.y.toLocaleString('vi-VN') + " VNĐ";
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<style>
+    .card {
+        border-radius: 15px;
+    }
+
+        .card h3 {
+            margin-top: 10px;
+        }
+</style>

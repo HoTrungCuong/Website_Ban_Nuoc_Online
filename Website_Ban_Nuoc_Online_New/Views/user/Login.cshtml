@@ -1,0 +1,200 @@
+﻿@{
+    ViewBag.Title = "Đăng nhập / Đăng ký";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="d-flex justify-content-center align-items-start py-5" style="min-height: 100vh; background: #f8f0e6;">
+    <div class="bg-white p-4 rounded-4 shadow-sm" style="width: 430px;">
+
+        @* Thông báo chung *@
+        @if (TempData["ThongBao"] != null)
+        {
+            <div class="alert alert-success text-center fw-bold">@TempData["ThongBao"]</div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger text-center fw-bold">@TempData["Error"]</div>
+        }
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs border-0 mb-4" role="tablist">
+            <li class="nav-item w-50" role="presentation">
+                <button class="nav-link active w-100 fw-bold text-uppercase" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">
+                    Đăng nhập
+                </button>
+            </li>
+            <li class="nav-item w-50" role="presentation">
+                <button class="nav-link w-100 fw-bold text-uppercase" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false">
+                    Đăng ký
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+
+            <!-- LOGIN -->
+            <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                @using (Html.BeginForm("Login", "User", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-2">
+                        <label for="UsernameOrEmail" class="fw-bold text-danger form-label">TÊN ĐĂNG NHẬP</label>
+                        <input id="UsernameOrEmail" type="text" name="UsernameOrEmail" class="form-control" placeholder="Nhập tên đăng nhập" required />
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="Password" class="fw-bold text-danger form-label">MẬT KHẨU</label>
+                        <input id="Password" type="password" name="Password" class="form-control" placeholder="Nhập mật khẩu" required />
+                    </div>
+
+                    <div class="text-end mt-1 mb-2">
+                        <a href="@Url.Action("QuenMatKhau", "User")" class="small" style="color:red">Quên mật khẩu?</a>
+                    </div>
+
+                    <button type="submit" class="btn w-100 text-white fw-bold" style="background: #7b4a52;">
+                        ĐĂNG NHẬP
+                    </button>
+                }
+            </div>
+
+            <!-- REGISTER -->
+            <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                @using (Html.BeginForm("DangKy", "User", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    // --- Lỗi chung (ModelState[""] errors) ---
+                    var generalErrors = ViewData.ModelState[string.Empty];
+                    if (generalErrors != null && generalErrors.Errors.Count > 0)
+                    {
+                        <div class="alert alert-danger text-center fw-bold">@generalErrors.Errors[0].ErrorMessage</div>
+                    }
+
+                    <div class="mb-3">
+                        <label for="UserName" class="form-label">Tên đăng nhập</label>
+                        <input id="UserName" type="text" name="UserName" class="form-control" placeholder="Nhập tên đăng nhập" value="@(Request.Form["UserName"] ?? "")" />
+                        @* lỗi từng ô ở dưới (nếu có) *@
+                        @if (ViewData.ModelState["UserName"]?.Errors.Count > 0)
+                        {
+                            <div class="text-danger small mt-1">@ViewData.ModelState["UserName"].Errors[0].ErrorMessage</div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="HoTen" class="form-label">Họ tên</label>
+                        <input id="HoTen" type="text" name="HoTen" class="form-control" placeholder="Nhập họ tên đầy đủ" value="@(Request.Form["HoTen"] ?? "")" />
+                        @if (ViewData.ModelState["HoTen"]?.Errors.Count > 0)
+                        {
+                            <div class="text-danger small mt-1">@ViewData.ModelState["HoTen"].Errors[0].ErrorMessage</div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Email" class="form-label">Email</label>
+                        <input id="Email" type="email" name="Email" class="form-control" placeholder="Nhập email" value="@(Request.Form["Email"] ?? "")" />
+                        @if (ViewData.ModelState["Email"]?.Errors.Count > 0)
+                        {
+                            <div class="text-danger small mt-1">@ViewData.ModelState["Email"].Errors[0].ErrorMessage</div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="MatKhau" class="form-label">Mật khẩu</label>
+                        <input id="MatKhau" type="password" name="MatKhau" class="form-control" placeholder="Tối thiểu 6 ký tự (gồm chữ và số)" />
+                        @if (ViewData.ModelState["MatKhau"]?.Errors.Count > 0)
+                        {
+                            <div class="text-danger small mt-1">@ViewData.ModelState["MatKhau"].Errors[0].ErrorMessage</div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="XacNhanMatKhau" class="form-label">Xác nhận mật khẩu</label>
+                        <input id="XacNhanMatKhau" type="password" name="XacNhanMatKhau" class="form-control" placeholder="Nhập lại mật khẩu" />
+                        @if (ViewData.ModelState["XacNhanMatKhau"]?.Errors.Count > 0)
+                        {
+                            <div class="text-danger small mt-1">@ViewData.ModelState["XacNhanMatKhau"].Errors[0].ErrorMessage</div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="GioiTinh" class="form-label">Giới tính</label>
+                        <select id="GioiTinh" name="GioiTinh" class="form-select">
+                            <option value="">-- Chọn giới tính --</option>
+                            <option value="Nam" @(Request.Form["GioiTinh"] == "Nam" ? "selected" : "")>Nam</option>
+                            <option value="Nữ" @(Request.Form["GioiTinh"] == "Nữ" ? "selected" : "")>Nữ</option>
+                        </select>
+                        @if (ViewData.ModelState["GioiTinh"]?.Errors.Count > 0)
+                        {
+                            <div class="text-danger small mt-1">@ViewData.ModelState["GioiTinh"].Errors[0].ErrorMessage</div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="SDT" class="form-label">Số điện thoại</label>
+                        <input id="SDT" type="text" name="SDT" class="form-control" placeholder="Nhập số điện thoại" value="@(Request.Form["SDT"] ?? "")" />
+                        @if (ViewData.ModelState["SDT"]?.Errors.Count > 0)
+                        {
+                            <div class="text-danger small mt-1">@ViewData.ModelState["SDT"].Errors[0].ErrorMessage</div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="DiaChi" class="form-label">Địa chỉ</label>
+                        <input id="DiaChi" type="text" name="DiaChi" class="form-control" placeholder="Nhập địa chỉ giao hàng" value="@(Request.Form["DiaChi"] ?? "")" />
+                        @if (ViewData.ModelState["DiaChi"]?.Errors.Count > 0)
+                        {
+                            <div class="text-danger small mt-1">@ViewData.ModelState["DiaChi"].Errors[0].ErrorMessage</div>
+                        }
+                    </div>
+
+                    <button type="submit" class="btn w-100 text-white fw-bold mt-3" style="background: #7b4a52;">
+                        ĐĂNG KÝ
+                    </button>
+                }
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .nav-tabs .nav-link {
+        background: #d4ab89;
+        color: #fff;
+        border-radius: 8px 8px 0 0;
+        border: none;
+    }
+
+        .nav-tabs .nav-link.active {
+            background: #6b4835;
+            color: #fff;
+        }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // --- Safer rendering of server flag into JS ---
+        // Render a JS boolean literal (true/false) from ViewBag.ShowRegister.
+        // If ViewBag.ShowRegister is null -> false.
+        var showRegisterServerSide = @( (ViewBag.ShowRegister ?? false).ToString().ToLower() );
+
+        try {
+            if (showRegisterServerSide) {
+                var registerTab = document.getElementById('register-tab');
+                if (registerTab) {
+                    var tab = new bootstrap.Tab(registerTab);
+                    tab.show();
+                }
+            }
+        } catch (e) {
+            console.warn('Cannot switch tab:', e);
+        }
+    });
+</script>

@@ -1,0 +1,339 @@
+﻿@model List<Website_Ban_Nuoc_Online.Models.HoaDon>
+
+@{
+    ViewBag.Title = "Quản lý đơn hàng | Smile Coffee";
+    Layout = "~/Views/Shared/_Layout_QL.cshtml";
+}
+
+@Html.AntiForgeryToken()
+
+<style>
+    body {
+        background: #f4f3f1;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    .table-container {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        padding: 20px;
+    }
+
+    /* PAYMENT STATUS */
+    .status-select {
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 6px 10px;
+        color: #fff;
+        cursor: pointer;
+        width: 160px;
+        text-align: center;
+        transition: all 0.2s;
+    }
+
+    .status-gray {
+        background-color: #6c757d;
+    }
+
+    .status-green {
+        background-color: #28a745;
+    }
+
+    .status-blue {
+        background-color: #0d6efd;
+    }
+
+    .status-red {
+        background-color: #dc3545;
+    }
+
+    /* DELIVERY STATUS */
+    .delivery-select {
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 6px 10px;
+        color: #fff;
+        cursor: pointer;
+        width: 160px;
+        text-align: center;
+        transition: all 0.2s;
+    }
+
+    .delivery-yellow {
+        background-color: #ffc107;
+    }
+
+    .delivery-blue {
+        background-color: #0d6efd;
+    }
+
+    .delivery-green {
+        background-color: #28a745;
+    }
+
+    .delivery-red {
+        background-color: #dc3545;
+    }
+    /* Hủy đơn hàng */
+
+    select.status-select option, select.delivery-select option {
+        color: #000;
+        background: #fff;
+    }
+
+    .filter-bar {
+        background: #fff;
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+        .btn-delete:hover {
+            background-color: #b02a37;
+        }
+
+        .btn-delete[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+</style>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+    <form method="get" action="@Url.Action("OrderManage", "QuanLy")"
+          class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+        <div class="flex-grow-1 search-bar d-flex align-items-center gap-2">
+            <i class="fa-solid fa-magnifying-glass text-secondary"></i>
+            <input type="text" name="search" value="@Request.QueryString["search"]"
+                   placeholder="Tìm kiếm khách hàng..." class="form-control" />
+        </div>
+
+        <select name="status" class="form-select" style="max-width:200px;">
+            <option @(Request["status"] == "Tất cả" ? "selected" : "")>Tất cả</option>
+            <option @(Request["status"] == "Đã thanh toán" ? "selected" : "")>Đã thanh toán</option>
+            <option @(Request["status"] == "Chưa thanh toán" ? "selected" : "")>Chưa thanh toán</option>
+            <option @(Request["status"] == "Đã hủy" ? "selected" : "")>Đã hủy</option>
+        </select>
+
+        <input type="date" name="date" class="form-control" style="max-width:200px;"
+               value="@Request.QueryString["date"]" />
+
+        <button type="submit" class="btn btn-success fw-bold">Lọc</button>
+    </form>
+</div>
+
+<!-- TABLE -->
+<div class="table-container">
+    <h4 class="fw-bold mb-3">Quản lý đơn hàng</h4>
+    <table class="table align-middle text-center">
+        <thead class="table-light">
+            <tr>
+                <th>Mã HD</th>
+                <th>Khách hàng</th>
+                <th>Ngày đặt</th>
+                <th>Sản phẩm</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái thanh toán</th>
+                <th>Trạng thái giao hàng</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int i = 0;
+                foreach (var o in Model.OrderByDescending(x => x.MaHD))
+                {
+                    i++;
+
+                    // ----- TRẠNG THÁI THANH TOÁN -----
+                    var status = (o.TinhTrang != null && !String.IsNullOrEmpty(o.TinhTrang.TinhTrangDon))
+                                 ? o.TinhTrang.TinhTrangDon
+                                 : "Chờ xử lý";
+
+                    // ----- TRẠNG THÁI GIAO HÀNG -----
+                    var giaoProp = o.GetType().GetProperty("TrangThaiGiaoHang");
+                    var giao = giaoProp != null
+                               ? (giaoProp.GetValue(o) as string ?? "Chờ xử lý")
+                               : "Chờ xử lý";
+
+                    string statusColorClass = "status-gray";
+                    if (status == "Đã thanh toán")
+                    {
+                        statusColorClass = "status-green";
+                    }
+                    else if (status == "Chưa thanh toán")
+                    {
+                        statusColorClass = "status-blue";
+                    }
+                    else if (status == "Đã hủy")
+                    {
+                        statusColorClass = "status-red";
+                    }
+
+                    string giaoColorClass = "delivery-yellow";
+                    if (giao == "Đang giao hàng")
+                    {
+                        giaoColorClass = "delivery-blue";
+                    }
+                    else if (giao == "Đã giao hàng")
+                    {
+                        giaoColorClass = "delivery-green";
+                    }
+                    else if (giao == "Hủy đơn hàng")
+                    {
+                        giaoColorClass = "delivery-red";
+                    }
+
+                    string ngayLapStr = o.NgayLap.HasValue
+                                        ? o.NgayLap.Value.ToString("dd/MM/yyyy")
+                                        : "";
+
+                    <tr data-id="@o.MaHD">
+                        <td>@o.MaHD</td>
+                        <td>@(o.KhachHang != null ? o.KhachHang.HoTen : "")</td>
+                        <td>@ngayLapStr</td>
+                        <td>
+                            @string.Join(", ",
+                                o.ChiTietHoaDons.Select(ct => ct.Mon.TenMon + " x" + ct.SoLuong))
+                        </td>
+                        <td>@String.Format("{0:N0} đ", o.TongTien)</td>
+
+                        <!-- PAYMENT -->
+                        <td>
+                            <select class="status-select @statusColorClass"
+                                    data-id="@o.MaHD"
+                                    data-prev="@status">
+                                <option value="Chờ xử lý" @(status == "Chờ xử lý" ? "selected" : "")>Chờ xử lý</option>
+                                <option value="Đã thanh toán" @(status == "Đã thanh toán" ? "selected" : "")>Đã thanh toán</option>
+                                <option value="Chưa thanh toán" @(status == "Chưa thanh toán" ? "selected" : "")>Chưa thanh toán</option>
+                                <option value="Đã hủy" @(status == "Đã hủy" ? "selected" : "")>Đã hủy</option>
+                            </select>
+                        </td>
+
+                        <!-- DELIVERY -->
+                        <td>
+                            <select class="delivery-select @giaoColorClass"
+                                    data-id="@o.MaHD"
+                                    data-prev="@giao">
+                                <option value="Chờ xử lý" @(giao == "Chờ xử lý" ? "selected" : "")>Chờ xử lý</option>
+                                <option value="Đang giao hàng" @(giao == "Đang giao hàng" ? "selected" : "")>Đang giao hàng</option>
+                                <option value="Đã giao hàng" @(giao == "Đã giao hàng" ? "selected" : "")>Đã giao hàng</option>
+                                <option value="Hủy đơn hàng" @(giao == "Hủy đơn hàng" ? "selected" : "")>Hủy đơn hàng</option>
+                            </select>
+                        </td>
+
+                        <td>
+                            <button class="btn-delete" data-id="@o.MaHD">
+                                <i class="fa-solid fa-trash"></i> Xóa
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8" class="text-center text-muted">Không có đơn hàng nào</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(function () {
+
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
+        /* PAYMENT STATUS — đổi màu UI */
+        $(".status-select").on("change", function () {
+            const sel = $(this);
+            const val = sel.val();
+
+            sel.removeClass("status-gray status-green status-blue status-red");
+
+            if (val === "Đã thanh toán") sel.addClass("status-green");
+            else if (val === "Chưa thanh toán") sel.addClass("status-blue");
+            else if (val === "Đã hủy") sel.addClass("status-red");
+            else sel.addClass("status-gray");
+        });
+
+        /* DELIVERY STATUS — tiến trình không cho lùi */
+        const order = ["Chờ xử lý", "Đang giao hàng", "Đã giao hàng", "Hủy đơn hàng"];
+
+        function getDeliveryClass(val) {
+            if (val === "Chờ xử lý") return "delivery-yellow";
+            if (val === "Đang giao hàng") return "delivery-blue";
+            if (val === "Đã giao hàng") return "delivery-green";
+            if (val === "Hủy đơn hàng") return "delivery-red";
+            return "";
+        }
+
+        $(".delivery-select").on("change", function () {
+            const sel = $(this);
+            const val = sel.val();
+            const prev = sel.data("prev");
+
+            const prevIndex = order.indexOf(prev);
+            const newIndex = order.indexOf(val);
+
+            if (prevIndex !== -1 && newIndex < prevIndex) {
+                alert("Không thể quay lại trạng thái trước đó!");
+                sel.val(prev);
+                return;
+            }
+
+            sel.removeClass("delivery-yellow delivery-blue delivery-green delivery-red")
+                .addClass(getDeliveryClass(val));
+
+            sel.data("prev", val);
+        });
+
+        /* DELETE ORDER */
+        $(".btn-delete").on("click", function () {
+            const id = $(this).data("id");
+
+            if (confirm("Bạn có chắc muốn xóa đơn hàng #" + id + " không?")) {
+
+                $.ajax({
+                    url: '@Url.Action("DeleteOrder", "QuanLy")',
+                    type: 'POST',
+                    data: {
+                        __RequestVerificationToken: token,
+                        id: id
+                    },
+                    success: function (res) {
+                        if (res.success) {
+                            alert("Đã xóa đơn hàng thành công!");
+                            location.reload();
+                        } else {
+                            alert("Lỗi: " + res.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi khi xóa đơn hàng!");
+                    }
+                });
+            }
+        });
+
+    });
+</script>

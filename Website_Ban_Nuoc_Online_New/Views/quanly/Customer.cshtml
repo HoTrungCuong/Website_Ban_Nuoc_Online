@@ -1,0 +1,233 @@
+﻿@model IEnumerable<Website_Ban_Nuoc_Online.Models.KhachHang>
+@{
+    ViewBag.Title = "Quản lý thông tin khách hàng | Smile Coffee";
+    Layout = "~/Views/Shared/_Layout_QL.cshtml";
+}
+<style>
+    body {
+        background: #f4f3f1;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    /* HEADER */
+    .header-top {
+        background: #66363e;
+        color: #fff;
+        font-weight: 600;
+        padding: 8px 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 10;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 270px;
+        background: #fff;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        border-right: 1px solid #ddd;
+        padding-top: 80px;
+    }
+
+    .sidebar-item {
+        padding: 12px 18px;
+        border-radius: 8px;
+        color: #7b4a52;
+        font-weight: 600;
+        text-decoration: none;
+        display: block;
+    }
+
+        .sidebar-item.active {
+            background: #d6b08c;
+            color: #fff;
+        }
+
+        .sidebar-item:hover {
+            background: #ead7c4;
+            color: #7b4a52;
+        }
+
+    /* MAIN CONTENT */
+    .main {
+        margin-left: 270px;
+        padding: 100px 30px 50px 30px;
+    }
+
+    .user-box {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        padding: 8px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+        .user-box img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+    .search-bar {
+        background: #fff;
+        border-radius: 12px;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            background: transparent;
+        }
+
+    .table-container {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        padding: 20px;
+    }
+
+    .btn-add {
+        background: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 8px 16px;
+    }
+
+        .btn-add:hover {
+            background: #0069d9;
+        }
+
+    .btn-edit {
+        background: #17a2b8;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: #fff;
+        font-weight: 500;
+    }
+
+        .btn-edit:hover {
+            background: #138496;
+        }
+
+    .btn-delete {
+        background: #dc3545;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: #fff;
+        font-weight: 500;
+    }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+</style>
+
+
+<form method="get" action="@Url.Action("Customer","QuanLy")" class="mb-3 d-flex gap-2">
+    <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm khách hàng..." value="@Request["keyword"]" />
+    <button type="submit" class="btn btn-primary">Tìm</button>
+</form>
+
+
+<!-- TABLE -->
+<div class="table-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold m-0">Quản lý thông tin khách hàng</h4>
+    </div>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.HoTen)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MatKhau)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GioiTinh)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SDT)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DiaChi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Avartar)
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HoTen)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MatKhau)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GioiTinh)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SDT)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DiaChi)
+                </td>
+                <td>
+                    <img src="~/Content/Images/avatar.jpg"
+                         style="width:50px; height:50px; object-fit:cover; border-radius:8px;" />
+
+                </td>
+
+            </tr>
+        }
+
+    </table>
+</div>
+<div class="d-flex justify-content-center mt-3">
+    <ul class="pagination">
+        <li class="page-item @(ViewBag.Page == 1 ? "disabled" : "")">
+            <a class="page-link" href="?page=@(ViewBag.Page - 1)">Previous</a>
+        </li>
+
+        @for (int i = 1; i <= ViewBag.NoOfPages; i++)
+        {
+            <li class="page-item @(i == ViewBag.Page ? "active" : "")">
+                <a class="page-link" href="?page=@i">@i</a>
+            </li>
+        }
+
+        <li class="page-item @(ViewBag.Page == ViewBag.NoOfPages ? "disabled" : "")">
+            <a class="page-link" href="?page=@(ViewBag.Page + 1)">Next</a>
+        </li>
+    </ul>
+</div>
+
+

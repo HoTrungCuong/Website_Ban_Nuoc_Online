@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "Quên mật khẩu Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="d-flex justify-content-center align-items-start py-5" style="min-height:100vh;background:#f8f0e6;">
+    <div class="bg-white p-4 rounded-4 shadow-sm" style="width:460px;">
+        <h3 class="text-center mb-3">Quên mật khẩu - Admin</h3>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+        @if (TempData["ThongBao"] != null)
+        {
+            <div class="alert alert-success">@TempData["ThongBao"]</div>
+        }
+
+        @using (Html.BeginForm("QuenMatKhau", "Admin", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="Username" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email hoặc Số điện thoại</label>
+                <input type="text" name="EmailOrSDT" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Số CCCD</label>
+                <input type="text" name="CCCD" class="form-control" required placeholder="Nhập số căn cước công dân" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" style="background: #7b4a52">Xác nhận</button>
+        }
+
+        <div class="text-center mt-3">
+            <a href="@Url.Action("Auth", "Admin")">Quay lại đăng nhập</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

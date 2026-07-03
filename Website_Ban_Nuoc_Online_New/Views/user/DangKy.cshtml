@@ -1,0 +1,86 @@
+﻿@model Website_Ban_Nuoc_Online.Models.KhachHang
+@{
+    ViewBag.Title = "Đăng ký tài khoản khách hàng";
+}
+
+<div class="container">
+    <div class="login-container mt-5" style="max-width: 500px; margin:auto">
+        <div class="card shadow-lg p-4 border-0">
+            <h3 class="card-title text-center fw-bold text-primary mb-4">
+                Đăng ký tài khoản khách hàng
+            </h3>
+
+            @if (TempData["ThongBao"] != null)
+            {
+                <div class="alert alert-success text-center">@TempData["ThongBao"]</div>
+            }
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger text-center">@ViewBag.Error</div>
+            }
+
+            @using (Html.BeginForm("DangKy", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="mb-3">
+                    <label for="HoTen" class="form-label">Họ tên</label>
+                    <input type="text" name="HoTen" class="form-control" required placeholder="Nhập họ tên đầy đủ" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="Email" class="form-label">Email</label>
+                    <input type="email" name="Email" class="form-control" required placeholder="Nhập email" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="MatKhau" class="form-label">Mật khẩu</label>
+                    <input type="password" name="MatKhau" class="form-control" required placeholder="Nhập mật khẩu" />
+                </div>
+                <div class="mb-3">
+                    <label>Xác nhận mật khẩu</label>
+                    <input type="password" name="XacNhanMatKhau" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="GioiTinh" class="form-label">Giới tính</label>
+                    <select name="GioiTinh" class="form-select" required>
+                        <option value="">-- Chọn giới tính --</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="NgaySinh" class="form-label">Ngày sinh</label>
+                    <input type="date" name="NgaySinh" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="SDT" class="form-label">Số điện thoại</label>
+                    <input type="text" name="SDT" class="form-control" placeholder="Nhập số điện thoại" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="DiaChi" class="form-label">Địa chỉ</label>
+                    <input type="text" name="DiaChi" class="form-control" placeholder="Nhập địa chỉ giao hàng" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="Avartar" class="form-label">Ảnh đại diện</label>
+                    <input type="file" name="Avartar" class="form-control" accept="image/*" />
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mb-3">
+                    ĐĂNG KÝ
+                </button>
+            }
+
+            <p class="text-center mt-3">
+                Đã có tài khoản?
+                <a href="@Url.Action("Login", "User")" class="text-decoration-none fw-bold text-primary">
+                    Đăng nhập ngay
+                </a>
+            </p>
+        </div>
+    </div>
+</div>

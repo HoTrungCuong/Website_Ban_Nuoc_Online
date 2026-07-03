@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewBag.Title = "QuenMatKhau";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3 class="text-center mt-4">Quên mật khẩu</h3>
+
+<div class="container mt-5" style="max-width:450px;">
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
+    @using (Html.BeginForm("QuenMatKhau", "User", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label class="form-label">Tên đăng nhập</label>
+            <input type="text" name="UserName" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email hoặc SĐT</label>
+            <input type="text" name="EmailOrSDT" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Xác nhận</button>
+    }
+    <div class="text-center mt-3">
+        <a href="@Url.Action("Login", "User")">Quay lại đăng nhập</a>
+    </div>
+</div>
+

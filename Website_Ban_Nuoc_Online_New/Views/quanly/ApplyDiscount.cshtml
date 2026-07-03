@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewBag.Title = "ApplyDiscount";
+    Layout = "~/Views/Shared/_Layout_QL.cshtml";
+}
+
+<h3>Áp dụng giảm giá 10% cho món Nước Ép (tháng 10 & 11)</h3>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@using (Html.BeginForm("ApplyDiscountConfirmed", "QuanLy", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <p>Bấm nút để áp dụng giảm giá tháng 10,11.</p>
+    <button type="submit" class="btn btn-warning">Áp dụng giảm giá ngay</button>
+    @Html.ActionLink("Quay lại", "SanPham", null, new { @class = "btn btn-secondary ms-2" })
+}
+

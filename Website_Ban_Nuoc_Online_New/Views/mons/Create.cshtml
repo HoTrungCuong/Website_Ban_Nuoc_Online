@@ -1,0 +1,61 @@
+﻿@model Website_Ban_Nuoc_Online.Models.Mon
+
+@{
+    ViewBag.Title = "Thêm sản phẩm";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";   // hoặc layout khách nếu bạn muốn
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+
+<div class="container mt-4">
+    <div class="card card-box">
+        <div class="card-body">
+            <h3 class="mb-3">Thêm món mới</h3>
+            <hr />
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="mb-3">
+                    @Html.LabelFor(model => model.TenMon, htmlAttributes: new { @class = "form-label" })
+                    @Html.EditorFor(model => model.TenMon, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TenMon, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(model => model.GiaBan, htmlAttributes: new { @class = "form-label" })
+                    @Html.EditorFor(model => model.GiaBan, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.GiaBan, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(model => model.MoTa, htmlAttributes: new { @class = "form-label" })
+                    @Html.TextAreaFor(model => model.MoTa, new { @class = "form-control", rows = 3 })
+                    @Html.ValidationMessageFor(model => model.MoTa, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(model => model.HinhAnh, htmlAttributes: new { @class = "form-label" })
+                    @Html.EditorFor(model => model.HinhAnh, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.HinhAnh, "", new { @class = "text-danger" })
+                    <small class="text-muted">Nhập tên file ảnh (ví dụ: cafeden.jpg)</small>
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(model => model.MaLoai, "Loại sản phẩm", htmlAttributes: new { @class = "form-label" })
+                    @Html.DropDownList("MaLoai", null, "--Chọn loại--", new { @class = "form-select" })
+                    @Html.ValidationMessageFor(model => model.MaLoai, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    @Html.ActionLink("← Quay lại danh sách", "Index", null, new { @class = "btn btn-outline-secondary" })
+                    <input type="submit" value="Thêm mới" class="btn btn-primary" />
+                </div>
+            }
+        </div>
+    </div>
+</div>

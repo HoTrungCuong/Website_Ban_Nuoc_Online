@@ -1,0 +1,79 @@
+﻿@model Website_Ban_Nuoc_Online.Models.Mon
+
+@{
+    ViewBag.Title = "Chỉnh sửa món";
+    Layout = "~/Views/Shared/_Layout_QL.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0">Chỉnh sửa món</h4>
+        </div>
+
+        <div class="card-body">
+            @using (Html.BeginForm("Edit", "QuanLy", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.MaMon)
+                @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+                <!-- Tên món -->
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.TenMon, "Tên món", new { @class = "form-label fw-bold" })
+                    @Html.TextBoxFor(m => m.TenMon, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.TenMon, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Giá bán -->
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.GiaBan, "Giá bán", new { @class = "form-label fw-bold" })
+                    @Html.TextBoxFor(m => m.GiaBan, new { @class = "form-control", type = "number", step = "1000" })
+                    @Html.ValidationMessageFor(m => m.GiaBan, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Mô tả -->
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.MoTa, "Mô tả", new { @class = "form-label fw-bold" })
+                    @Html.TextAreaFor(m => m.MoTa, new { @class = "form-control", rows = 3 })
+                    @Html.ValidationMessageFor(m => m.MoTa, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Hình ảnh -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Hình ảnh hiện tại</label><br />
+
+                    @if (!string.IsNullOrEmpty(Model.HinhAnh))
+                    {
+                        <img src="@Url.Content("~/Content/Images/" + Model.HinhAnh)"
+                             class="img-thumbnail mb-2"
+                             style="width:150px;height:150px;object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <p class="text-muted">Chưa có hình</p>
+                    }
+
+                    <input type="file" name="HinhAnhFile" class="form-control mt-2" />
+                </div>
+
+                <!-- Loại món -->
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.MaLoai, "Loại món", new { @class = "form-label fw-bold" })
+                    @Html.DropDownListFor(
+                        m => m.MaLoai,
+                        (SelectList)ViewBag.MaLoai,
+                        "Chọn loại",
+                        new { @class = "form-select" }
+                    )
+                    @Html.ValidationMessageFor(m => m.MaLoai, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-warning">Lưu thay đổi</button>
+                    @Html.ActionLink("Quay lại danh sách", "SanPham", null, new { @class = "btn btn-secondary" })
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,219 @@
+﻿@model IEnumerable<Website_Ban_Nuoc_Online.Models.Mon>
+
+@{
+    ViewBag.Title = "Quản lý sản phẩm";
+    Layout = "~/Views/Shared/_Layout_QL.cshtml";
+}
+<style>
+    body {
+        background: #f4f3f1;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    /* HEADER */
+    .header-top {
+        background: #66363e;
+        color: #fff;
+        font-weight: 600;
+        padding: 8px 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 10;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 270px;
+        background: #fff;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        border-right: 1px solid #ddd;
+        padding-top: 80px;
+    }
+
+    .sidebar-item {
+        padding: 12px 18px;
+        border-radius: 8px;
+        color: #7b4a52;
+        font-weight: 600;
+        text-decoration: none;
+        display: block;
+    }
+
+        .sidebar-item.active {
+            background: #d6b08c;
+            color: #fff;
+        }
+
+        .sidebar-item:hover {
+            background: #ead7c4;
+            color: #7b4a52;
+        }
+
+    /* MAIN CONTENT */
+    .main {
+        margin-left: 270px;
+        padding: 100px 30px 50px 30px;
+    }
+
+    .user-box {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        padding: 8px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+        .user-box img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+    .search-bar {
+        background: #fff;
+        border-radius: 12px;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            background: transparent;
+        }
+
+    .table-container {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        padding: 20px;
+    }
+
+    .btn-add {
+        background: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 8px 16px;
+    }
+
+        .btn-add:hover {
+            background: #0069d9;
+        }
+
+    .btn-edit {
+        background: #17a2b8;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: #fff;
+        font-weight: 500;
+    }
+
+        .btn-edit:hover {
+            background: #138496;
+        }
+
+    .btn-delete {
+        background: #dc3545;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: #fff;
+        font-weight: 500;
+    }
+
+        .btn-delete:hover {
+            background: #c82333;
+        }
+</style>
+<h3>Quản lý sản phẩm</h3>
+
+<form method="get" action="@Url.Action("SanPham","QuanLy")" class="mb-3 d-flex gap-2 align-items-center">
+    <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm sản phẩm..." value="@(ViewBag.Keyword ?? "")" />
+
+    <!-- Dropdown loại (sử dụng ViewBag.MaLoai được chuẩn bị trong controller) -->
+    <select name="maLoai" class="form-select" style="width:200px;">
+        <option value="">Tất cả loại</option>
+        @foreach (var loai in (IEnumerable<Website_Ban_Nuoc_Online.Models.Loai>)ViewBag.Loais)
+        {
+            var sel = (ViewBag.SelectedMaLoai != null && (int)ViewBag.SelectedMaLoai == loai.MaLoai) ? "selected" : "";
+            <option value="@loai.MaLoai" @Html.Raw(sel)>@loai.TenLoai</option>
+        }
+    </select>
+
+    <button type="submit" class="btn bg-primary" style="color:white">Tìm</button>
+    <a href="@Url.Action("Create", "QuanLy")" class="btn btn-add ms-auto">Thêm sản phẩm</a>
+</form>
+
+<table class="table table-bordered table-striped align-middle text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>Tên món</th>
+            <th>Giá bán</th>
+            <th>Mô tả</th>
+            <th>Hình ảnh</th>
+            <th>Loại</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.TenMon</td>
+                <td>@String.Format("{0:N0}", item.GiaBan) đ</td>
+                <td>@item.MoTa</td>
+                <td>
+                    <img src="@Url.Content("~/Content/Images/" + (item.HinhAnh ?? "no-image.png"))"
+                         alt="@item.TenMon"
+                         style="width:50px; height:50px; object-fit:cover; border-radius:8px;" />
+                </td>
+                <td>@(item.Loai != null ? item.Loai.TenLoai : "")</td>
+                <td>
+                    @Html.ActionLink("Cập nhật", "Edit", new { id = item.MaMon }, new { @class = "btn btn-edit btn-sm me-1" })
+                    @Html.ActionLink("Xóa", "Delete", new { id = item.MaMon }, new { @class = "btn btn-delete btn-sm me-1" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-center mt-3">
+    <ul class="pagination">
+        @{
+            int current = ViewBag.Page ?? 1;
+            int total = ViewBag.NoOfPages ?? 1;
+            string keywordParam = ViewBag.Keyword ?? "";
+            int? selectedMaLoai = ViewBag.SelectedMaLoai as int?;
+        }
+
+        <li class="page-item @(current == 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("SanPham","QuanLy", new { page = current - 1, keyword = keywordParam, maLoai = selectedMaLoai })">Previous</a>
+        </li>
+
+        @for (int i = 1; i <= total; i++)
+        {
+            <li class="page-item @(i == current ? "active" : "")">
+                <a class="page-link" href="@Url.Action("SanPham","QuanLy", new { page = i, keyword = keywordParam, maLoai = selectedMaLoai })">@i</a>
+            </li>
+        }
+
+        <li class="page-item @(current == total ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("SanPham","QuanLy", new { page = current + 1, keyword = keywordParam, maLoai = selectedMaLoai })">Next</a>
+        </li>
+    </ul>
+</div>

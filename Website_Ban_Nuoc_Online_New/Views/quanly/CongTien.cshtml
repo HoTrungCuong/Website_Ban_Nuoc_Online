@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Cộng tiền cho khách hàng";
+    Layout = "~/Views/Shared/_Layout_QL.cshtml";
+}
+
+<div class="container mt-5" style="max-width: 500px;">
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white text-center fw-bold">
+            CỘNG TIỀN CHO KHÁCH HÀNG
+        </div>
+        <div class="card-body">
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">@ViewBag.Error</div>
+            }
+
+            @if (ViewBag.Success != null)
+            {
+                <div class="alert alert-success">@ViewBag.Success</div>
+            }
+
+            @using (Html.BeginForm("CongTien", "QuanLy", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label for="Username" class="form-label fw-bold">Tên đăng nhập (Username)</label>
+                    <input type="text" name="Username" class="form-control" placeholder="Nhập username khách hàng" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="SoTien" class="form-label fw-bold">Số tiền cần cộng (VNĐ)</label>
+                    <input type="number" name="SoTien" class="form-control" min="1000" step="1000" placeholder="Ví dụ: 50000" required />
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 fw-bold">
+                    <i class="bi bi-plus-circle"></i> CỘNG TIỀN
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">

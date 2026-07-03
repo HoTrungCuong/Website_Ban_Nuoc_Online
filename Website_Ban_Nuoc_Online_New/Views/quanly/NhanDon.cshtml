@@ -1,0 +1,49 @@
+﻿@using System.Linq
+@model IEnumerable<Website_Ban_Nuoc_Online.Models.HoaDon>
+
+@{
+    ViewBag.Title = "Nhận đơn";
+    Layout = "~/Views/Shared/_Layout_QL.cshtml";
+}
+
+<h2>Danh sách đơn chờ nhận</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success fw-bold text-center">
+        @TempData["Success"]
+    </div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info mt-3">
+        Hiện chưa có đơn hàng nào đang chờ xử lý.
+    </div>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Mã HĐ</th>
+                <th>Khách hàng</th>
+                <th>Ngày lập</th>
+                <th>Tổng tiền</th>
+                <th>...</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var hd in Model)
+            {
+                <tr>
+                    <td>@hd.MaHD</td>
+                    <td>@(hd.KhachHang == null ? "" : hd.KhachHang.HoTen)</td>
+                    <td>@(hd.NgayLap?.ToString("dd/MM/yyyy"))</td>
+                    <td>@String.Format("{0:N0} VNĐ", hd.TongTien)</td>
+                    <td>...</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

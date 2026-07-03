@@ -1,0 +1,17 @@
+﻿@model IEnumerable<Website_Ban_Nuoc_Online.Models.Loai>
+
+<h4>DANH MỤC</h4>
+<ul>
+    @foreach (var dm in Model)
+    {
+        <li>
+            @Html.ActionLink(
+                dm.TenLoai,
+                "HTSachTheoLoai",
+                "Mons",
+                new { MaLoai = dm.MaLoai },
+                new { @class = "nav-link" }
+            )
+        </li>
+    }
+</ul>

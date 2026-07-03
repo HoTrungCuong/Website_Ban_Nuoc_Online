@@ -1,0 +1,85 @@
+﻿@model IEnumerable<Website_Ban_Nuoc_Online.Models.HoaDon>
+
+@{
+    ViewBag.Title = "Đơn hàng của nhân viên";
+    Layout = "~/Views/Shared/_Layout_QL.cshtml";
+}
+
+<h2>Đơn hàng của nhân viên</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success fw-bold text-center">
+        @TempData["Success"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger fw-bold text-center">
+        @TempData["Error"]
+    </div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">Không có đơn hàng nào.</div>
+}
+else
+{
+    <div class="card p-3 mb-3">
+        <table class="table table-striped table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã HD</th>
+                    <th>Tên khách hàng</th>
+                    <th>Số điện thoại</th>
+                    <th>Ngày lập</th>
+                    <th>Sản phẩm</th>
+                    <th>Tổng tiền</th>
+                    <th>Địa chỉ giao</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var hd in Model.OrderByDescending(x => x.NgayLap))
+                {
+                    <tr>
+                        <td>@hd.MaHD</td>
+                        <td>@(hd.KhachHang != null ? hd.KhachHang.HoTen : "-")</td>
+                        <td>@(hd.KhachHang != null ? hd.KhachHang.SDT : "-")</td>
+                        <td>@(hd.NgayLap.HasValue ? hd.NgayLap.Value.ToString("dd/MM/yyyy HH:mm") : "-")</td>
+                        <td>
+                            @if (hd.ChiTietHoaDons != null && hd.ChiTietHoaDons.Any())
+                            {
+                                <ul class="mb-0 ps-3">
+                                    @foreach (var ct in hd.ChiTietHoaDons)
+                                    {
+                                        <li>@(ct.Mon != null ? ct.Mon.TenMon : "-") x @ct.SoLuong</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Không có sản phẩm</span>
+                            }
+                        </td>
+                        <td>@String.Format("{0:N0} VNĐ", hd.TongTien)</td>
+                        <td>@(hd.DiaChiGiaoHang ?? "-")</td>
+                        <td>
+                            <a class="btn btn-sm btn-primary mb-1"
+                               href="@Url.Action("NhanVien", "QuanLy", new { id = hd.MaHD })">
+                                Nhận đơn
+                            </a>
+                            <!-- Nếu muốn mở trực tiếp trang nhận đơn (nếu bạn muốn), uncomment dòng dưới:
+                            <a class="btn btn-sm btn-success"
+                               href="@Url.Action("GiaoDonToNhanVien", "QuanLy", new { id = hd.MaHD })">
+                                Giao cho nhân viên
+                            </a>
+                            -->
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

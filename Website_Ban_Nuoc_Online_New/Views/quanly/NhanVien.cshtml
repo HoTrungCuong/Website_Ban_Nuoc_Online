@@ -1,0 +1,92 @@
+﻿@model Website_Ban_Nuoc_Online.Models.HoaDon
+
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+    Layout = "~/Views/Shared/_Layout_QL.cshtml";
+}
+
+<h2>Chi tiết đơn hàng</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success text-center fw-bold">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger text-center fw-bold">@TempData["Error"]</div>
+}
+
+@if (Model == null)
+{
+    <div class="alert alert-info">Không tìm thấy hóa đơn.</div>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Mã HD</th>
+                <th>Tên khách hàng</th>
+                <th>Số điện thoại</th>
+                <th>Ngày lập</th>
+                <th>Tên món</th>
+                <th>Đơn giá</th>
+                <th>Số lượng</th>
+                <th>Tổng tiền</th>
+                <th>Địa chỉ giao</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Model.MaHD</td>
+                <td>@(Model.KhachHang != null ? Model.KhachHang.HoTen : "-")</td>
+                <td>@(Model.KhachHang != null ? Model.KhachHang.SDT : "-")</td>
+                <td>@(Model.NgayLap.HasValue ? Model.NgayLap.Value.ToString("dd/MM/yyyy HH:mm") : "-")</td>
+
+                <td>
+                    <ul class="mb-0 ps-3">
+                        @foreach (var ct in Model.ChiTietHoaDons)
+                        {
+                            <li>@(ct.Mon != null ? ct.Mon.TenMon : "-")</li>
+                        }
+                    </ul>
+                </td>
+
+                <td>
+                    <ul class="mb-0 ps-3">
+                        @foreach (var ct in Model.ChiTietHoaDons)
+                        {
+                            <li>@String.Format("{0:N0} VNĐ", ct.GiaBan)</li>
+                        }
+                    </ul>
+                </td>
+
+                <td>
+                    <ul class="mb-0 ps-3">
+                        @foreach (var ct in Model.ChiTietHoaDons)
+                        {
+                            <li>@ct.SoLuong</li>
+                        }
+                    </ul>
+                </td>
+
+                <td>@String.Format("{0:N0} VNĐ", Model.TongTien)</td>
+                <td>@(Model.DiaChiGiaoHang ?? "-")</td>
+
+                <td>
+                    @using (Html.BeginForm("NhanDonNhanVien", "QuanLy", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("id", Model.MaHD)
+                        <button type="submit" class="btn btn-primary btn-sm">Xác nhận thành công</button>
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="mt-3">
+        <a class="btn btn-secondary" href="@Url.Action("NhanDon", "QuanLy")">← Quay về danh sách đơn chờ</a>
+    </div>
+}

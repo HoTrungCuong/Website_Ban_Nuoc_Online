@@ -1,0 +1,169 @@
+﻿@model Website_Ban_Nuoc_Online.Models.GioHang
+@using Website_Ban_Nuoc_Online.Models
+
+@{
+    ViewBag.Title = "Giỏ hàng";
+    var user = ViewBag.KhachHang as KhachHang;
+
+    // Phí vận chuyển dùng ở phần tóm tắt
+    const decimal PhiVanChuyen = 15000m;
+}
+
+@if (Model == null || Model.lst == null || !Model.lst.Any())
+{
+    <div class="alert alert-warning text-center my-4">
+        Giỏ hàng của bạn đang trống 😢
+    </div>
+}
+else
+{
+    <div class="container mt-4">
+        <h2 class="mb-4 text-center fw-bold">Giỏ hàng của bạn</h2>
+        <div class="row">
+            <!-- DANH SÁCH SẢN PHẨM -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr class="table-light text-center">
+                                    <th scope="col">Sản phẩm</th>
+                                    <th scope="col" class="text-center">Giá</th>
+                                    <th scope="col" class="text-center">Số lượng</th>
+                                    <th scope="col" class="text-end">Tổng cộng</th>
+                                    <th scope="col" class="text-center">Xóa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (CartItem item in Model.lst)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="~/Content/Images/@item.sHinhAnh"
+                                                     class="me-3 rounded"
+                                                     alt="@item.sTenMon" width="60" />
+                                                <span class="fw-bold">@item.sTenMon</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            @String.Format("{0:N0} VNĐ", item.dDonGia)
+                                        </td>
+                                        <td class="text-center"><b>@item.iSoLuong</b></td>
+                                        <td class="text-end fw-bold text-danger">
+                                            @String.Format("{0:N0} VNĐ", item.ThanhTien)
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="@Url.Action("XoaMatHang", "DatHang", new { msp = item.iMaMon })"
+                                               class="btn btn-sm btn-outline-danger"
+                                               onclick="return confirm('Xóa sản phẩm này khỏi giỏ hàng?');">
+                                                Xóa
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <a href="/Mons/Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TÓM TẮT ĐƠN HÀNG -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-header fw-bold text-center">
+                        Tóm tắt đơn hàng
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tổng tiền hàng:</span>
+                            <span class="fw-bold">
+                                @String.Format("{0:N0} VNĐ", Model.TongThanhTien())
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Phí vận chuyển:</span>
+                            <span class="fw-bold">
+                                @String.Format("{0:N0} VNĐ", PhiVanChuyen)
+                            </span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-bold mb-2">Phương thức thanh toán:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio"
+                                       name="PhuongThucThanhToan" id="viDienTu" value="Vi" checked>
+                                <label class="form-check-label" for="viDienTu">
+                                    Thanh toán bằng ví
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio"
+                                       name="PhuongThucThanhToan" id="tienMat" value="TienMat">
+                                <label class="form-check-label" for="tienMat">
+                                    Thanh toán sau khi nhận hàng
+                                </label>
+                            </div>
+                        </div>
+
+                        <form method="post"
+                              action="@Url.Action("ApDungMaGiamGia", "DatHang")"
+                              class="d-flex justify-content-between mb-3">
+                            <select id="MaKM" name="maGiamGia" class="form-select me-2">
+                                <option value="">--Chọn mã giảm giá--</option>
+                                @foreach (KhuyenMai km in ViewBag.MaGiamGiaList)
+                                {
+                                    <option value="@km.MaKM"
+                                            @(Model != null && Model.TenKM == km.TenKM ? "selected" : "")>
+                                        @km.TenKM
+                                    </option>
+                                }
+                            </select>
+                            <button type="submit" class="btn text-white" style="background-color: #7b4a52;">
+                                Áp dụng
+                            </button>
+                        </form>
+
+                        <hr />
+
+                        @if (Model != null && !string.IsNullOrEmpty(Model.TenKM))
+                        {
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Đã áp dụng mã:</span>
+                                <span class="fw-bold text-success">
+                                    @Model.TenKM (@Model.PhanTramGiam%)
+                                </span>
+                            </div>
+                        }
+
+                        @{
+                            // ép về decimal để cộng với PhiVanChuyen (decimal)
+                            decimal tongSauGiam = Convert.ToDecimal(Model.TongThanhTienSauGiam());
+                            decimal tongThanhToan = tongSauGiam + PhiVanChuyen;
+                        }
+
+                        <div class="d-flex justify-content-between mb-3 text-danger fs-5">
+                            <span class="fw-bold">TỔNG THANH TOÁN:</span>
+                            <span class="fw-bold">
+                                @String.Format("{0:N0} VNĐ", tongThanhToan)
+                            </span>
+                        </div>
+
+                        <a href="@Url.Action("XacNhanDonHang", "DatHang")"
+                           class="btn w-100 btn-lg"
+                           style="background-color: #7b4a52; color: white;">
+                            Tiến hành đặt hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

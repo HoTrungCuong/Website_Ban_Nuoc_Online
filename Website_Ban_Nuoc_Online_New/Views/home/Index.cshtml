@@ -1,0 +1,209 @@
+﻿@{
+    ViewBag.Title = "Trang Chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* ===== GENERAL ===== */
+    h2 {
+        color: #7b4a52;
+    }
+
+    .btn {
+        background-color: #7b4a52;
+        color: aliceblue;
+    }
+
+    /* ===== GREETING BOX ===== */
+    .user-info-bar {
+    position: absolute;
+    top: -5px;
+    right: 2px;
+    z-index: 9999;
+}
+
+/* Mỗi ô riêng */
+.info-box {
+    background-color: #7b4a52;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    transition: all 0.25s ease;
+}
+
+.info-box:hover {
+    background-color: #a0606c;
+    transform: translateY(-2px);
+}
+
+/* Avatar */
+.info-box img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.15);
+}
+
+/* Tên người dùng */
+.info-box .name {
+    font-weight: 600;
+    white-space: nowrap;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Responsive */
+@@media (max-width: 768px) {
+    .user-info-bar {
+        position: static;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .info-box {
+        padding: 6px 10px;
+    }
+
+    .info-box img {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+    /* ===== PRODUCT CARD ===== */
+    .product-card:hover {
+        transform: scale(1.05);
+        transition: all 0.3s ease;
+    }
+</style>
+
+@if (TempData["ThongBao"] != null)
+{
+    <div class="alert alert-success text-center">
+        @TempData["ThongBao"]
+    </div>
+}
+
+<section class="checkout-section py-5" style="background-color: #fff7f1; position: relative;">
+
+    @* === GREETING USER === *@
+    @if (Session["HoTen"] != null)
+    {
+        var hoTen = Session["HoTen"] as string;
+        var userObj = Session["User"] as Website_Ban_Nuoc_Online.Models.KhachHang;
+
+        <div class="user-info-bar d-flex align-items-center justify-content-end gap-3 flex-wrap">
+
+            <!-- Ô Avatar + Họ tên -->
+            <div class="info-box d-flex align-items-center gap-2">
+                @if (userObj != null && !String.IsNullOrEmpty(userObj.Avartar))
+                {
+                    <img src="~/Content/Images/avatar.jpg" alt="Avatar of @hoTen" />
+                }
+                else
+                {
+                    <img src="@Url.Content("~/Content/Images/avatar.jpg")" alt="Default avatar" />
+                }
+                <span class="name">@hoTen</span>
+            </div>
+        </div>
+    }
+
+
+    @* === SLIDER === *@
+    <div class="slider">
+        <div class="slides">
+            <div class="slide">
+                <img src="~/Content/Images/dCHEG4kr7zibUkYoqcNIQTYo36bINJb0lTE.jpg" />
+                <div class="slider-text">
+                    <h1>Khởi đầu ngày mới đầy năng lượng</h1>
+                    <p>Với tách cà phê đậm đà từ Smile Coffee</p>
+                    <a href="/Mons/Index" class="btn-cta">Đặt ngay</a>
+                </div>
+            </div>
+
+            <div class="slide">
+                <img src="~/Content/Images/ca-phe-san-vuon-1.jpg" />
+                <div class="slider-text">
+                    <h1>Không gian sân vườn thư giãn</h1>
+                    <p>Nhâm nhi cà phê giữa thiên nhiên</p>
+                    <a href="/Mons/Index" class="btn-cta">Đặt ngay</a>
+                </div>
+            </div>
+
+            <div class="slide">
+                <img src="~/Content/Images/z7174946251731_b149dd8906db803dfc3bb416e6aca9f5.jpg" />
+                <div class="slider-text">
+                    <h1>Không gian tầng thượng</h1>
+                    <p>Nhìn ngắm view Sài Gòn từ trên cao</p>
+                    <a href="/Mons/Index" class="btn-cta">Đặt ngay</a>
+                </div>
+            </div>
+
+            <div class="slide">
+                <img src="~/Content/Images/z7174946308838_ea6ef7623fe13d30160bd749567458d5.jpg" />
+                <div class="slider-text">
+                    <h1>Không gian check-in độc lạ</h1>
+                    <p>Lưu giữ khoảnh khắc của bạn cùng Smile Coffee</p>
+                    <a href="/Mons/Index" class="btn-cta">Đặt ngay</a>
+                </div>
+            </div>
+        </div>
+
+        <button class="prev" onclick="plusSlides(-1)">&#10094;</button>
+        <button class="next" onclick="plusSlides(1)">&#10095;</button>
+    </div>
+
+    <script>
+        let index = 0;
+        const slides = document.querySelector(".slides");
+        const total = document.querySelectorAll(".slide").length;
+
+        function showSlide() {
+            slides.style.transform = `translateX(${-index * 25}%)`;
+        }
+
+        function plusSlides(n) {
+            index += n;
+            if (index < 0) index = total - 1;
+            if (index >= total) index = 0;
+            showSlide();
+        }
+
+        setInterval(() => {
+            plusSlides(1);
+        }, 5000);
+    </script>
+</section>
+
+<!-- ===== FEATURED PRODUCTS ===== -->
+<section class="featured-products py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center fw-bold text-uppercase mb-4">
+            Món mới
+        </h2>
+
+        <div class="row justify-content-center">
+            @foreach (var sp in ViewBag.SanPhamTieuBieu)
+            {
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="card product-card">
+                        <img src="~/Content/Images/@sp.HinhAnh" class="card-img-top"
+                             alt="@sp.TenMon" style="height: 200px; object-fit: cover;" />
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">@sp.TenMon</h5>
+                            <p class="text-danger fw-bold">@String.Format("{0:N0} VNĐ", sp.GiaBan)</p>
+                            <a href="@Url.Action("Details", "Mons", new { id = sp.MaMon })"
+                               class="btn btn-sm">
+                                Xem chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

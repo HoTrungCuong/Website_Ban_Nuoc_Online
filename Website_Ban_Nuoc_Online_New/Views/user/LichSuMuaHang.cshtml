@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Website_Ban_Nuoc_Online.Models.HoaDon>
+@{
+    ViewBag.Title = "LichSuMuaHang";
+}
+<div class="container mt-4">
+    <h2 class="text-success text-center mb-4">LỊCH SỬ MUA HÀNG CỦA BẠN</h2>
+
+    <table class="table table-bordered table-striped text-center align-middle">
+        <thead class="table-success">
+            <tr>
+                <th>Mã HĐ</th>
+                <th>Ngày lập</th>
+                <th>Tổng tiền</th>
+                <th>Tình trạng</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.MaHD</td>
+                    <td>@(item.NgayLap != null ? item.NgayLap.Value.ToString("dd/MM/yyyy") : "—")</td>
+                    <td>@String.Format("{0:N0} VNĐ", item.TongTien)</td>
+                    <td>@(item.TinhTrang?.TinhTrangDon ?? "Chưa có trạng thái")</td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
